@@ -27,6 +27,7 @@ export default function App() {
   const disconnectSocket = useCryptoStore((state) => state.disconnectSocket);
   const decrementSeconds = useCryptoStore((state) => state.decrementSeconds);
   const setCoins = useCryptoStore((state) => state.setCoins);
+  const updateCoins = useCryptoStore((state) => state.updateCoins);
 
   const alerts = useCryptoStore((state) => state.alerts);
   const addAlert = useCryptoStore((state) => state.addAlert);
@@ -62,23 +63,42 @@ export default function App() {
     return () => clearInterval(timer);
   }, [decrementSeconds]);
 
-  // 3. Fallback Initial Rest queries to bypass initial load bottlenecks fast
+  // 3. Fallback Initial Rest queries + Robust Background Polling fallback when Socket is disconnected
   useEffect(() => {
-    async function initialFetch() {
+    let active = true;
+    async function loadCoinData(isFirstFetch: boolean) {
       try {
         const res = await fetch('/api/coins?limit=150');
         const json = await res.json();
-        if (json.success && json.data && json.data.length > 0) {
-          setCoins(json.data);
+        if (active && json.success && json.data && json.data.length > 0) {
+          if (isFirstFetch) {
+            setCoins(json.data);
+          } else {
+            updateCoins(json.data);
+          }
           setIsLoading(false);
         }
       } catch (e) {
-        console.warn('Fallback REST loader bypassed. Direct stream handling active.', e);
+        console.warn('Fallback REST loader error. Offline fallback mechanism remains active.', e);
       }
     }
 
-    initialFetch();
-  }, [setCoins]);
+    // Call on mount immediately for instant bootstrap
+    loadCoinData(true);
+
+    // If socket.io is disconnected, keep fetching via HTTP polling in the background (every 15 seconds)
+    const interval = setInterval(() => {
+      if (!socketConnected) {
+        console.log('Socket connection offline or checking. Polling rest endpoint to trigger updates.');
+        loadCoinData(false);
+      }
+    }, 15000);
+
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, [setCoins, updateCoins, socketConnected]);
 
   // Set isLoading to false as soon as we have coins in state from either Socket or fetch
   useEffect(() => {

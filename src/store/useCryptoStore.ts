@@ -158,8 +158,15 @@ export const useCryptoStore = create<CryptoState>((set, get) => ({
   connectSocket: () => {
     if (socket) return;
 
-    // Connect automatically to the current origin host matching reverse proxy
-    socket = io();
+    // Use direct websocket transport first to bypass cookie/reverse-proxy handshakes, then fallback
+    socket = io({
+      transports: ['websocket', 'polling'],
+      upgrade: true,
+      reconnection: true,
+      reconnectionDelay: 2000,
+      reconnectionAttempts: 10,
+      timeout: 15000,
+    });
 
     socket.on('connect', () => {
       set({ socketConnected: true });
