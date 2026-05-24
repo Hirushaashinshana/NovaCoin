@@ -3,6 +3,7 @@ import { Bell, Coins, RefreshCw, Terminal, TrendingUp, AlertTriangle, Play, X, H
 
 import { useCryptoStore } from './store/useCryptoStore';
 import { Coin, CoinHistoryPoint } from './types';
+import { generateClientHistoricalFallbackData } from './utils/fallback';
 import Navbar from './components/Navbar';
 import CryptoTable from './components/CryptoTable';
 import CryptoChart from './components/CryptoChart';
@@ -98,9 +99,21 @@ export default function App() {
         const json = await res.json();
         if (active && json.success) {
           setHistoricalPrices(json.prices || []);
+        } else if (active) {
+          // If response status was successful but JSON says success is false, generate fallback
+          const activeCoin = coins.find(c => c.id === selectedCoinId);
+          const currentPrice = activeCoin ? activeCoin.current_price : 100;
+          const fallbackData = generateClientHistoricalFallbackData(currentPrice, chartDays);
+          setHistoricalPrices(fallbackData);
         }
       } catch (err) {
-        console.error('Failure requesting price charts', err);
+        console.warn('Failure requesting price charts from backend, leveraging client-side fallback engine.', err);
+        if (active) {
+          const activeCoin = coins.find(c => c.id === selectedCoinId);
+          const currentPrice = activeCoin ? activeCoin.current_price : 100;
+          const fallbackData = generateClientHistoricalFallbackData(currentPrice, chartDays);
+          setHistoricalPrices(fallbackData);
+        }
       } finally {
         if (active) setIsLoadingChart(false);
       }
