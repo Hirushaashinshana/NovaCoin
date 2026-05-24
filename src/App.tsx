@@ -9,6 +9,7 @@ import CryptoChart from './components/CryptoChart';
 import CryptoDetails from './components/CryptoDetails';
 import CryptoPortfolio from './components/CryptoPortfolio';
 import CryptoDetailPage from './components/CryptoDetailPage';
+import CryptoCompareChart from './components/CryptoCompareChart';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'portfolio'>('dashboard');
@@ -116,17 +117,8 @@ export default function App() {
     };
   }, [selectedCoinId, chartDays]);
 
-  // 5. Scroll to detail page when a coin is selected
-  useEffect(() => {
-    if (selectedCoinId) {
-      setTimeout(() => {
-        const element = document.getElementById('coin-detail-section');
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 100);
-    }
-  }, [selectedCoinId]);
+  // 5. Active selection transitions to a dedicated sub-view automatically
+  // No scroll-to-bottom side effects
 
   return (
     <div className={`min-h-screen flex flex-col bg-[#080b11] text-slate-100 transition-colors duration-300 ${
@@ -140,9 +132,7 @@ export default function App() {
         activeTab={activeTab}
         onTabChange={(tab) => {
           setActiveTab(tab);
-          if (tab === 'dashboard') {
-            setSelectedCoinId(null);
-          }
+          setSelectedCoinId(null); // Clear active coin search on tab switch
         }}
         theme={theme}
         onThemeChange={setTheme}
@@ -179,25 +169,27 @@ export default function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
         
         {/* Banner Welcome Info */}
-        <div className="bg-gradient-to-r from-slate-900 via-slate-950 to-slate-900 border border-slate-800 rounded-3xl p-6 relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-            <Flame className="h-24 w-24 text-cyan-500" />
+        {!selectedCoin && (
+          <div className="bg-gradient-to-r from-slate-900 via-slate-950 to-slate-900 border border-slate-800 rounded-3xl p-6 relative overflow-hidden shadow-2xl animate-fade-in">
+            <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+              <Flame className="h-24 w-24 text-cyan-500" />
+            </div>
+            <div className="relative z-10 max-w-2xl">
+              <span className="inline-flex items-center text-xs font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/25 px-2.5 py-1 rounded-full font-bold mb-3 select-none">
+                <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full mr-2 animate-ping" />
+                {activeTab === 'dashboard' ? 'NOVACOIN V2 PROTOCOL LIVE FEED' : 'MY CRYPTO INVESTMENT VALUATION'}
+              </span>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                {activeTab === 'dashboard' ? 'Live Cryptocurrency Ticker & Analytics' : 'Personal Asset Portfolio Ledger'}
+              </h1>
+              <p className="text-xs text-slate-400 font-medium font-mono leading-relaxed mt-2">
+                {activeTab === 'dashboard' 
+                  ? 'Connect to websocket streaming nodes instantly to capture high-frequency fluctuations. Program targets values alerts, analyze market trends, and prevent rating limits using unified proxy systems.'
+                  : 'Manage and evaluate your virtual holdings dynamically. Track aggregate acquisition cost, absolute current market valuation, aggregate daily delta variations, and profit yield margins.'}
+              </p>
+            </div>
           </div>
-          <div className="relative z-10 max-w-2xl">
-            <span className="inline-flex items-center text-xs font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/25 px-2.5 py-1 rounded-full font-bold mb-3 select-none">
-              <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full mr-2 animate-ping" />
-              {activeTab === 'dashboard' ? 'NOVACOIN V2 PROTOCOL LIVE FEED' : 'MY CRYPTO INVESTMENT VALUATION'}
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              {activeTab === 'dashboard' ? 'Live Cryptocurrency Ticker & Analytics' : 'Personal Asset Portfolio Ledger'}
-            </h1>
-            <p className="text-xs text-slate-400 font-medium font-mono leading-relaxed mt-2">
-              {activeTab === 'dashboard' 
-                ? 'Connect to websocket streaming nodes instantly to capture high-frequency fluctuations. Program targets values alerts, analyze market trends, and prevent rating limits using unified proxy systems.'
-                : 'Manage and evaluate your virtual holdings dynamically. Track aggregate acquisition cost, absolute current market valuation, aggregate daily delta variations, and profit yield margins.'}
-            </p>
-          </div>
-        </div>
+        )}
 
         {isLoading ? (
           <div className="h-[50vh] flex flex-col items-center justify-center space-y-3 font-mono">
@@ -205,6 +197,17 @@ export default function App() {
             <h3 className="text-sm font-semibold text-slate-300">ESTABLISHING CRYPTO GRAPH HANDSHAKES...</h3>
             <span className="text-[11px] text-slate-500">Retrieving secure caches from CoinGecko nodes</span>
           </div>
+        ) : selectedCoin ? (
+          <CryptoDetailPage
+            coin={selectedCoin}
+            historicalPrices={historicalPrices}
+            chartDays={chartDays}
+            onDaysChange={setChartDays}
+            alerts={alerts}
+            onAddAlert={addAlert}
+            onRemoveAlert={removeAlert}
+            onBack={() => setSelectedCoinId(null)}
+          />
         ) : activeTab === 'portfolio' ? (
           <CryptoPortfolio onSelectCoin={(coinId) => {
             setSelectedCoinId(coinId);
@@ -216,20 +219,9 @@ export default function App() {
               onSelectCoin={(coin) => setSelectedCoinId(coin.id)}
               isLoading={isLoading}
             />
-            
-            {selectedCoin && (
-              <div id="coin-detail-section" className="scroll-mt-20">
-                <CryptoDetailPage
-                  coin={selectedCoin}
-                  historicalPrices={historicalPrices}
-                  chartDays={chartDays}
-                  onDaysChange={setChartDays}
-                  alerts={alerts}
-                  onAddAlert={addAlert}
-                  onRemoveAlert={removeAlert}
-                  onBack={() => setSelectedCoinId(null)}
-                />
-              </div>
+
+            {!isLoading && coins.length > 0 && (
+              <CryptoCompareChart coins={coins} />
             )}
           </div>
         )}

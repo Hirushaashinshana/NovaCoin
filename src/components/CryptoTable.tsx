@@ -26,6 +26,10 @@ const CryptoRow = React.memo(({
   const prevPriceRef = useRef<number | undefined>(undefined);
   const [flash, setFlash] = useState<'up' | 'down' | null>(null);
 
+  // Track previous percentage changes for the 24h column to trigger subtle neon glow pulses
+  const prevPercentRef = useRef<number | undefined>(undefined);
+  const [pctFlash, setPctFlash] = useState<'up' | 'down' | null>(null);
+
   useEffect(() => {
     if (!coin) return;
     const currentPrice = coin.current_price;
@@ -38,6 +42,23 @@ const CryptoRow = React.memo(({
     }
     prevPriceRef.current = currentPrice;
   }, [coin?.current_price]);
+
+  useEffect(() => {
+    if (!coin) return;
+    const currentPct = coin.price_change_percentage_24h;
+    const prevPct = prevPercentRef.current;
+
+    if (prevPct !== undefined && prevPct !== currentPct) {
+      const diff = currentPct - prevPct;
+      // Triggers if there's any visible change in percentage value (at least 0.005 abs change)
+      if (Math.abs(diff) >= 0.005) {
+        setPctFlash(diff > 0 ? 'up' : 'down');
+        const timer = setTimeout(() => setPctFlash(null), 1600);
+        return () => clearTimeout(timer);
+      }
+    }
+    prevPercentRef.current = currentPct;
+  }, [coin?.price_change_percentage_24h]);
 
   if (!coin) return null;
 
@@ -131,7 +152,9 @@ const CryptoRow = React.memo(({
       </td>
 
       {/* 24h Change */}
-      <td className="py-4 px-4 text-right">
+      <td className={`py-4 px-4 text-right transition-all duration-500 rounded-lg ${
+        pctFlash === 'up' ? 'pct-glow-up' : pctFlash === 'down' ? 'pct-glow-down' : ''
+      }`}>
         <span className={`inline-flex items-center font-mono font-semibold ${
           changeIsPos ? 'text-emerald-400' : 'text-red-400'
         }`}>
@@ -177,6 +200,12 @@ export default function CryptoTable({
 
   const [sortField, setSortField] = useState<SortField>('market_cap_rank');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset page when filtering or sorting changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, sortField, sortOrder]);
 
   // Handle column sorting toggle
   const handleSort = (field: SortField) => {
@@ -217,6 +246,16 @@ export default function CryptoTable({
       })
       .map(c => c.id);
   }, [coins, searchTerm, sortField, sortOrder]);
+
+  const totalItems = sortedAndFilteredCoinIds.length;
+  const totalPages = 4;
+  const itemsPerPage = Math.ceil(totalItems / totalPages) || 1;
+
+  const paginatedCoinIds = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+    return sortedAndFilteredCoinIds.slice(startIndex, endIndex);
+  }, [sortedAndFilteredCoinIds, currentPage, itemsPerPage, totalItems]);
 
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
@@ -309,7 +348,7 @@ export default function CryptoTable({
                 </td>
               </tr>
             ) : (
-              sortedAndFilteredCoinIds.map((id) => (
+              paginatedCoinIds.map((id) => (
                 <CryptoRow
                   key={id}
                   coinId={id}
@@ -320,6 +359,46 @@ export default function CryptoTable({
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Pagination Navigation */}
+      <div className="p-4 border-t border-slate-800/80 bg-slate-950/20 flex flex-col sm:flex-row justify-between items-center gap-3 select-none">
+        <div className="text-xs font-mono text-slate-500">
+          SHOWING ITEMS <span className="text-slate-300 font-semibold">{totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1}</span> - <span className="text-slate-300 font-semibold">{Math.min(currentPage * itemsPerPage, totalItems)}</span> OF <span className="text-slate-300 font-semibold">{totalItems}</span>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            disabled={currentPage === 1 || totalItems === 0}
+            className="px-3 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-xs font-mono text-slate-400 hover:text-cyan-400 hover:border-cyan-500/50 disabled:opacity-40 disabled:hover:text-slate-400 disabled:hover:border-slate-800 disabled:cursor-not-allowed transition-all cursor-pointer outline-none"
+          >
+            PREV
+          </button>
+          
+          {[1, 2, 3, 4].map(pageNum => (
+            <button
+              key={pageNum}
+              onClick={() => setCurrentPage(pageNum)}
+              disabled={totalItems === 0}
+              className={`h-8 w-8 rounded-lg flex items-center justify-center font-mono text-xs border duration-200 cursor-pointer outline-none ${
+                currentPage === pageNum
+                  ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/50 font-bold'
+                  : 'bg-slate-950/40 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+              }`}
+            >
+              {pageNum}
+            </button>
+          ))}
+          
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            disabled={currentPage === totalPages || totalItems === 0}
+            className="px-3 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-xs font-mono text-slate-400 hover:text-cyan-400 hover:border-cyan-500/50 disabled:opacity-40 disabled:hover:text-slate-400 disabled:hover:border-slate-800 disabled:cursor-not-allowed transition-all cursor-pointer outline-none"
+          >
+            NEXT
+          </button>
+        </div>
       </div>
 
     </div>

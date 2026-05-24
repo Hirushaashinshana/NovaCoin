@@ -286,3 +286,42 @@
   animation: pulse-highlight-down 1.8s ease-out;
 }
 
+@keyframes pct-glow-up-anim {
+  0% {
+    background-color: rgba(16, 185, 129, 0.22);
+    box-shadow: inset 0 0 10px rgba(16, 185, 129, 0.15);
+  }
+  10% {
+    background-color: rgba(16, 185, 129, 0.28);
+    box-shadow: inset 0 0 14px rgba(16, 185, 129, 0.25);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: inset 0 0 0px transparent;
+  }
+}
+
+@keyframes pct-glow-down-anim {
+  0% {
+    background-color: rgba(239, 68, 68, 0.22);
+    box-shadow: inset 0 0 10px rgba(239, 68, 68, 0.15);
+  }
+  10% {
+    background-color: rgba(239, 68, 68, 0.28);
+    box-shadow: inset 0 0 14px rgba(239, 68, 68, 0.25);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: inset 0 0 0px transparent;
+  }
+}
+
+.pct-glow-up {
+  animation: pct-glow-up-anim 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.pct-glow-down {
+  animation: pct-glow-down-anim 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+

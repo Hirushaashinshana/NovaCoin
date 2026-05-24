@@ -50,8 +50,8 @@ export default function CryptoDetailPage({
           onClick={onBack}
           className="group flex items-center space-x-2 bg-slate-900 hover:bg-slate-800/80 hover:text-cyan-400 border border-slate-800 hover:border-slate-705 px-4 py-2 rounded-xl text-xs font-mono transition-all text-slate-300 select-none cursor-pointer outline-none"
         >
-          <ChevronLeft className="h-4 w-4 group-hover:-translate-y-0.5 rotate-90 transition-transform" />
-          <span>CLOSE DETAILS VIEW</span>
+          <ChevronLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
+          <span>BACK TO MARKETS</span>
         </button>
 
         <div className="flex items-center space-x-2 font-mono text-[10px] text-slate-500 uppercase">
