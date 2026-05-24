@@ -1,0 +1,6 @@
+{
+  "name": "NovaCoin",
+  "description": "A live cryptocurrency tracking dashboard featuring real-time prices, charts, and historical market data.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

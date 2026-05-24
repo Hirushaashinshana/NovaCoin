@@ -1,0 +1,288 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+@layer base {
+  body {
+    background-color: #0b0f19;
+    color: #f3f4f6;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* Base Theme Switching Transition for everything */
+* {
+  transition: background-color 0.25s ease, border-color 0.25s ease, text-shadow 0.25s ease;
+}
+
+/* Light Theme Overrides */
+.theme-light {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  
+  /* Layout backgrounds */
+  .bg-\[\#080b11\] {
+    background-color: #f8fafc !important;
+  }
+  .bg-\[\#0b0f19\] {
+    background-color: #f1f5f9 !important;
+  }
+  
+  /* Card structures with premium shadows & crisp borders */
+  .bg-slate-900, .bg-slate-950, .bg-slate-900\/60, .bg-slate-900\/50, .bg-slate-950\/80, .bg-slate-950\/40, .bg-slate-950\/50 {
+    background-color: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 8px -1px rgba(15, 23, 42, 0.02) !important;
+  }
+  
+  /* Hero Banner Overrides */
+  div.bg-gradient-to-r.from-slate-900.via-slate-950.to-slate-900 {
+    background-image: linear-gradient(to right, #ffffff, #f1f5f9, #ffffff) !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 10px 30px -10px rgba(148, 163, 184, 0.1) !important;
+  }
+  
+  .bg-gradient-to-tr.from-slate-900.to-slate-950 {
+    background-image: linear-gradient(to top right, #ffffff, #f8fafc) !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 8px -1px rgba(15, 23, 42, 0.02) !important;
+  }
+  
+  /* Selected Table Rows - Cyan Glow */
+  tr.bg-gradient-to-r.from-cyan-950\/20 {
+    background-image: linear-gradient(to right, rgba(6, 182, 212, 0.08), rgba(241, 245, 249, 0.4), transparent) !important;
+    border-color: rgba(6, 182, 212, 0.15) !important;
+  }
+  
+  tr.hover\:bg-slate-800\/25:hover, tr.hover\:bg-slate-800\/10:hover {
+    background-color: rgba(241, 245, 249, 0.8) !important;
+  }
+  
+  .border-slate-800, .border-slate-850, .border-slate-900, .border-slate-800\/60, .border-slate-800\/80, .border-slate-755, .border-slate-750 {
+    border-color: #e2e8f0 !important;
+  }
+  
+  .divide-slate-800\/40 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #e2e8f0 !important;
+  }
+  
+  /* Typography Overwrites - Beautiful High Contrast slate-900 and slate-700 */
+  .text-slate-100, .text-slate-200, .text-slate-300, .text-white {
+    color: #0d1527 !important;
+  }
+  .text-slate-400, .text-slate-500 {
+    color: #475569 !important;
+  }
+  .text-slate-600 {
+    color: #64748b !important;
+  }
+  
+  /* Form Inputs, select containers */
+  input.bg-slate-950\/80, select.bg-slate-950, input.bg-slate-950, select.bg-slate-900 {
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+  }
+  select.bg-slate-950 option, select.bg-slate-900 option {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
+  input::placeholder {
+    color: #94a3b8 !important;
+  }
+  
+  /* Navigation Bar components styling */
+  header.border-b {
+    background-color: rgba(255, 255, 255, 0.82) !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+  }
+  
+  nav.bg-slate-900\/60, .bg-slate-900\/55, .bg-slate-900\/50, .bg-slate-900\/60, .bg-slate-900 {
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #475569 !important;
+  }
+  
+  /* Active tab capsules and highlights */
+  button.bg-cyan-500\/15.text-cyan-400 {
+    background-color: rgba(2, 132, 199, 0.08) !important;
+    border-color: rgba(2, 132, 199, 0.18) !important;
+    color: #0284c7 !important;
+  }
+  .text-cyan-400 {
+    color: #0284c7 !important;
+  }
+  .bg-cyan-500\/10 {
+    background-color: #e0f2fe !important;
+    color: #0369a1 !important;
+  }
+  
+  /* Tooltips Overlays */
+  .absolute.bg-slate-950\/95, .absolute.bg-slate-950 {
+    background-color: rgba(255, 255, 255, 0.96) !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08) !important;
+    color: #0f172a !important;
+  }
+  
+  /* Notification Float module */
+  .fixed .bg-gradient-to-tr.from-cyan-950\/95.to-slate-900\/95 {
+    background-image: linear-gradient(to top right, #ffffff, #f0fdfa) !important;
+    border-color: #22d3ee !important;
+    color: #0f172a !important;
+    box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.1) !important;
+  }
+  
+  /* SVG Charts elements adjustments */
+  svg line[stroke="#1e293b"] {
+    stroke: #e2e8f0 !important;
+  }
+  svg line[stroke="#475569"] {
+    stroke: #94a3b8 !important;
+  }
+  svg text {
+    fill: #475569 !important;
+  }
+  circle[stroke="#0b0f19"] {
+    stroke: #ffffff !important;
+  }
+}
+
+/* Cyberpunk Purple Theme Overrides */
+.theme-cyberpunk {
+  body {
+    background-color: #07030e;
+    color: #f5f3ff;
+  }
+  
+  /* Layout backgrounds */
+  .bg-[#080b11] {
+    background-color: #0a0414 !important;
+  }
+  .bg-[#0b0f19] {
+    background-color: #07030e !important;
+  }
+  
+  /* Card structures */
+  .bg-slate-900, .bg-slate-900\/60 {
+    background-color: #120921 !important;
+    border-color: #4a044e !important;
+  }
+  .bg-slate-950, .bg-slate-950\/80, .bg-slate-950\/40, .bg-slate-950\/50 {
+    background-color: #0c0517 !important;
+    border-color: #3b0764 !important;
+  }
+  
+  .bg-gradient-to-r.from-slate-900 {
+    background-image: linear-gradient(to right, #18092a, #0c0517) !important;
+  }
+  .bg-gradient-to-tr.from-slate-900 {
+    background-image: linear-gradient(to top right, #120921, #07030e) !important;
+  }
+  .border-slate-800, .border-slate-850, .border-slate-900, .border-slate-800\/60, .border-slate-800\/80 {
+    border-color: #3b0764 !important;
+  }
+  .divide-slate-800\/40 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #2e0850 !important;
+  }
+  
+  /* Typography overrides */
+  .text-slate-100, .text-slate-200, .text-slate-300 {
+    color: #f5f5f7 !important;
+  }
+  .text-slate-400, .text-slate-500, .text-slate-600 {
+    color: #d8b4fe !important;
+  }
+  
+  /* Hover and selections states */
+  .hover\:bg-slate-800\/25:hover, .hover\:bg-slate-800\/10:hover {
+    background-color: rgba(59, 7, 100, 0.4) !important;
+  }
+  .border-cyan-500\/25 {
+    border-color: rgba(168, 85, 247, 0.3) !important;
+  }
+  .text-cyan-400 {
+    color: #d8b4fe !important;
+  }
+  .bg-cyan-500\/10 {
+    background-color: rgba(147, 51, 234, 0.15) !important;
+    color: #d8b4fe !important;
+  }
+  .hover\:text-cyan-400:hover {
+    color: #f3e8ff !important;
+  }
+  
+  /* Buttons, inputs and sliders */
+  .bg-slate-950, input.bg-slate-950, select.bg-slate-950 {
+    background-color: #0a0414 !important;
+    border-color: #3b0764 !important;
+    color: #e9d5ff !important;
+  }
+  select.bg-slate-950 option {
+    background-color: #120921 !important;
+    color: #e9d5ff !important;
+  }
+  
+  /* Navbar elements */
+  header.border-b {
+    background-color: rgba(12, 5, 23, 0.85) !important;
+    border-color: #3b0764 !important;
+  }
+  .bg-slate-900 {
+    background-color: #120921 !important;
+    border-color: #3b0764 !important;
+  }
+  .bg-slate-900\/60 {
+    background-color: rgba(18, 9, 33, 0.6) !important;
+  }
+
+  /* SVG Charts overrides */
+  svg line[stroke="#1e293b"] {
+    stroke: #3b0764 !important;
+  }
+  svg text {
+    fill: #a78bfa !important;
+  }
+}
+
+/* Custom fine-grained scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0d1220;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+@keyframes pulse-highlight-up {
+  0% { background-color: rgba(16, 185, 129, 0.2); }
+  100% { background-color: transparent; }
+}
+
+@keyframes pulse-highlight-down {
+  0% { background-color: rgba(239, 68, 68, 0.2); }
+  100% { background-color: transparent; }
+}
+
+.flash-up {
+  animation: pulse-highlight-up 1.8s ease-out;
+}
+
+.flash-down {
+  animation: pulse-highlight-down 1.8s ease-out;
+}
+
