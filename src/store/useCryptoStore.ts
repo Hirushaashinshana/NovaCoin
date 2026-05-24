@@ -158,14 +158,15 @@ export const useCryptoStore = create<CryptoState>((set, get) => ({
   connectSocket: () => {
     if (socket) return;
 
-    // Use direct websocket transport first to bypass cookie/reverse-proxy handshakes, then fallback
+    // Start with polling and upgrade to websocket. This guarantees immediate connection
+    // through restricted proxies, load-balancers, and sandboxed environments.
     socket = io({
-      transports: ['websocket', 'polling'],
+      transports: ['polling', 'websocket'],
       upgrade: true,
       reconnection: true,
       reconnectionDelay: 2000,
-      reconnectionAttempts: 10,
-      timeout: 15000,
+      reconnectionAttempts: 15,
+      timeout: 20000,
     });
 
     socket.on('connect', () => {
