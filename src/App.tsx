@@ -73,16 +73,11 @@ export default function App() {
         }
       } catch (e) {
         console.warn('Fallback REST loader bypassed. Direct stream handling active.', e);
-      } finally {
-        // Unblock loader once WebSocket receives are ready
-        if (coins.length > 0) {
-          setIsLoading(false);
-        }
       }
     }
 
     initialFetch();
-  }, [setCoins, selectedCoinId, setSelectedCoinId, coins.length]);
+  }, [setCoins]);
 
   // Set isLoading to false as soon as we have coins in state from either Socket or fetch
   useEffect(() => {

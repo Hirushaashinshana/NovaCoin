@@ -1243,7 +1243,10 @@ async function startServer() {
   });
 
   // Client assets handler matching Vite middleware in dev / static in production
-  if (process.env.NODE_ENV !== 'production') {
+  const isProduction = process.env.NODE_ENV === 'production' || 
+                       (typeof __dirname !== 'undefined' && __dirname.includes('dist'));
+
+  if (!isProduction) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa'
