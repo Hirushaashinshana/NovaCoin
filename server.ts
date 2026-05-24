@@ -1236,6 +1236,48 @@ async function startServer() {
     }
   });
 
+  // REST API: Get neutral trends timeline for a coin
+  app.get('/api/trends/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const days = req.query.days ? parseInt(String(req.query.days), 10) : 7;
+      
+      const history = await fetchCoinHistoryFromAPI(id, days);
+      res.json({
+        success: true,
+        coinId: id,
+        days,
+        prices: history
+      });
+    } catch (e: any) {
+      res.status(500).json({
+        success: false,
+        error: e.message || 'Error loading timeline parameters'
+      });
+    }
+  });
+
+  // REST API: Get alternative neutral timeline for a coin
+  app.get('/api/timeline/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const days = req.query.days ? parseInt(String(req.query.days), 10) : 7;
+      
+      const history = await fetchCoinHistoryFromAPI(id, days);
+      res.json({
+        success: true,
+        coinId: id,
+        days,
+        prices: history
+      });
+    } catch (e: any) {
+      res.status(500).json({
+        success: false,
+        error: e.message || 'Error loading alternative timeline'
+      });
+    }
+  });
+
   // Trigger cache purge route for testing
   app.post('/api/cache/purge', (req, res) => {
     coinCache.clear();

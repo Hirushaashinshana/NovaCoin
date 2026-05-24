@@ -51,8 +51,8 @@ export default function CryptoCompareChart({ coins }: CryptoCompareChartProps) {
       setError(null);
       try {
         const [resA, resB] = await Promise.all([
-          fetch(`/api/coins/${coinIdA}/history?days=${days}`),
-          fetch(`/api/coins/${coinIdB}/history?days=${days}`)
+          fetch(`/api/trends/${coinIdA}?days=${days}`),
+          fetch(`/api/trends/${coinIdB}?days=${days}`)
         ]);
         
         const jsonA = await resA.json();

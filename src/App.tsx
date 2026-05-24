@@ -94,7 +94,7 @@ export default function App() {
     async function loadHistory() {
       setIsLoadingChart(true);
       try {
-        const res = await fetch(`/api/coins/${selectedCoinId}/history?days=${chartDays}`);
+        const res = await fetch(`/api/trends/${selectedCoinId}?days=${chartDays}`);
         const json = await res.json();
         if (active && json.success) {
           setHistoricalPrices(json.prices || []);
